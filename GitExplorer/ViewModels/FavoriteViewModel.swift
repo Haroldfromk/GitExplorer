@@ -39,6 +39,9 @@ final class FavoriteViewModel: ObservableObject {
             .sink { [weak self] id in
                 self?.names.removeAll { $0 == id }
                 UserDefaults.standard.set(self?.names, forKey: Constants.favoritesKey)
+                Task {
+                    try? await self?.asyncFetchFavoriteDataBefore()
+                }
             }.store(in: &cancellables)
         
         throttleSubject
@@ -52,12 +55,12 @@ final class FavoriteViewModel: ObservableObject {
         cancellables.removeAll()
     }
     
-    func reloadData() {
+    func reloadData() async throws {
         if let savedArray = UserDefaults.standard.array(forKey: Constants.favoritesKey) as? [String] {
             names = savedArray
         }
         
-        getData()
+        try await asyncFetchFavoriteDataBefore()
     }
     
     

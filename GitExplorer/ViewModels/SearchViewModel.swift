@@ -27,7 +27,7 @@ final class SearchViewModel: ObservableObject {
     
     init() {
         $searchText
-            .debounce(for: .seconds(1.5), scheduler: RunLoop.main)
+            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
             .removeDuplicates()
             .handleEvents(receiveOutput: { [weak self] _ in
                 self?.status = .loading

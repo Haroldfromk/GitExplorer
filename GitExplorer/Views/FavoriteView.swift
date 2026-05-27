@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FavoritesView: View {
+struct FavoriteView: View {
     
     @State private var countdown = 30
     @StateObject private var viewModel = FavoriteViewModel()
@@ -79,8 +79,12 @@ struct FavoritesView: View {
             .navigationDestination(for: GithubUser.self) { login in
                 ProfileView(user: login)
             }
-            .onAppear {
-                viewModel.reloadData()
+            .task {
+                do {
+                    try await viewModel.reloadData()
+                } catch {
+                    print(error)
+                }
                 isRefresh = true
                 viewModel.refreshData(isRefresh: true)
             }
