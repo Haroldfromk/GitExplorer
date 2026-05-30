@@ -14,7 +14,7 @@ struct ProfileView: View {
     @State private var isFollowing = false
     
     @StateObject var viewModel: ProfileViewModel
-    @StateObject var favoriteViewModel = FavoriteViewModel()
+    @EnvironmentObject var favoriteViewModel: FavoriteViewModel
     
     init(user: GithubUser) {
         self.user = user
@@ -115,6 +115,9 @@ struct ProfileView: View {
             if favoriteViewModel.names.contains(user.login){
                 isFavorite = true
             }
+        }
+        .onReceive(favoriteViewModel.$names) { names in
+            isFavorite = names.contains(user.login)
         }
     }
 }

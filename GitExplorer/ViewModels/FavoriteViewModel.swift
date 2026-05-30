@@ -5,6 +5,7 @@
 //  Created by Dongik Song on 5/23/26.
 //
 
+
 import Foundation
 import Combine
 
@@ -22,8 +23,11 @@ final class FavoriteViewModel: ObservableObject {
     private var timerCancellable: AnyCancellable?
     private let service = GitHubNetworkService()
     
+    let watchConnectivity = WatchConnectivityService()
+    
     init () {
-        if let savedArray = UserDefaults.standard.array(forKey: Constants.favoritesKey) as? [String] {
+        print("FavoriteViewModel init")
+        if let savedArray = UserDefaults.shared.array(forKey: Constants.favoritesKey) as? [String] {
             names = savedArray
         }
         
@@ -31,14 +35,17 @@ final class FavoriteViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] id in
                 self?.names.append(id)
-                UserDefaults.standard.set(self?.names, forKey: Constants.favoritesKey)
+                UserDefaults.shared.set(self?.names, forKey: Constants.favoritesKey)
+                Task {
+                    try? await self?.asyncFetchFavoriteDataBefore()
+                }
             }.store(in: &cancellables)
         
         removeSubject
             .receive(on: DispatchQueue.main)
             .sink { [weak self] id in
                 self?.names.removeAll { $0 == id }
-                UserDefaults.standard.set(self?.names, forKey: Constants.favoritesKey)
+                UserDefaults.shared.set(self?.names, forKey: Constants.favoritesKey)
                 Task {
                     try? await self?.asyncFetchFavoriteDataBefore()
                 }
@@ -49,6 +56,13 @@ final class FavoriteViewModel: ObservableObject {
             .sink {[weak self] _ in
                 self?.getData()
             }.store(in: &cancellables)
+        
+        $users
+            .dropFirst()
+            .sink { [weak self] users in
+                self?.watchConnectivity.sendFavoriteUsers(users)
+            }
+            .store(in: &cancellables)
     }
     
     deinit {
@@ -56,7 +70,8 @@ final class FavoriteViewModel: ObservableObject {
     }
     
     func reloadData() async throws {
-        if let savedArray = UserDefaults.standard.array(forKey: Constants.favoritesKey) as? [String] {
+        
+        if let savedArray = UserDefaults.shared.array(forKey: Constants.favoritesKey) as? [String] {
             names = savedArray
         }
         
@@ -134,7 +149,9 @@ final class FavoriteViewModel: ObservableObject {
                     guard let self else { return }
                     countdown -= 1
                     if countdown <= 0 {
-                        getData()
+                        Task {
+                            try? await self.asyncFetchFavoriteDataBefore()
+                        }
                         countdown = 30
                     }
                 }

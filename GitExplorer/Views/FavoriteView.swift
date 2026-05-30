@@ -10,8 +10,7 @@ import SwiftUI
 struct FavoriteView: View {
     
     @State private var countdown = 30
-    @StateObject private var viewModel = FavoriteViewModel()
-    @State var isRefresh = false
+    @EnvironmentObject var viewModel: FavoriteViewModel
     
     var body: some View {
         NavigationStack {
@@ -69,7 +68,7 @@ struct FavoriteView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         Task {
-                            try await viewModel.asyncFetchFavoriteData()
+                            try await viewModel.asyncFetchFavoriteDataBefore()
                         }
                     } label: {
                         Image(systemName: "arrow.clockwise")
@@ -79,17 +78,10 @@ struct FavoriteView: View {
             .navigationDestination(for: GithubUser.self) { login in
                 ProfileView(user: login)
             }
-            .task {
-                do {
-                    try await viewModel.reloadData()
-                } catch {
-                    print(error)
-                }
-                isRefresh = true
+            .onAppear {
                 viewModel.refreshData(isRefresh: true)
             }
             .onDisappear {
-                isRefresh = false
                 viewModel.refreshData(isRefresh: false)
             }
         }
