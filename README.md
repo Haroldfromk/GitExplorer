@@ -88,8 +88,6 @@ GitExplorerWatch Watch App/
 │   └── GithubUser.swift
 ├── Services/
 │   └── WatchConnectivityService.swift
-├── ViewModels/
-│   └── WatchFavoriteViewModel.swift
 ├── Views/
 │   ├── AvatarView.swift
 │   ├── FavoritesListView.swift
@@ -132,7 +130,6 @@ GitExplorerWidget/
 | `GitExplorerApp.swift` | 앱 진입점 |
 | `GithubUser.swift` (Watch) | Watch용 GithubUser 모델 |
 | `WatchConnectivityService.swift` (Watch) | iOS에서 데이터 수신 |
-| `WatchFavoriteViewModel.swift` | Watch 즐겨찾기 상태 관리 |
 | `FavoritesListView.swift` | Watch 즐겨찾기 목록 화면 |
 | `ProfileDetailView.swift` | Watch 프로필 상세 화면 |
 | `GitExplorerWatchApp.swift` | Watch 앱 진입점 |
