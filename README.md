@@ -245,3 +245,22 @@ struct Constants {
 - **Day 4**: 자동 갱신 (Timer, MergeMany, async/await, TaskGroup)
 - **Day 5**: WatchOS 연동 (WatchConnectivity, WCSession)
 - **Day 6**: Widget (WidgetKit, App Group, TimelineProvider)
+
+---
+
+## 추후 보완 예정
+
+### iOS 앱
+- `ObservableObject` + `@Published` → `@Observable` 마이그레이션
+- `ProfileViewModel` 로딩/성공/실패 상태 관리 추가
+- `FavoriteViewModel` → `scan` 으로 리팩토링
+- `FavoritesView` → SwiftData 연결 (UserDefaults 제거)
+- 에러 스트림 `merge`로 통합하여 Alert 띄우는 구조 추가
+- 에러 스트림을 Subject로 외부에 전달하는 구조 개선
+
+### Apple Watch
+- `ProfileDetailView` 레포 목록 API 연결
+
+### Widget
+- App Intent 적용 (유저 선택 커스터마이징)
+- WatchOS Widget 추가
